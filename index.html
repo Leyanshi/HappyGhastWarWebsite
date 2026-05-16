@@ -509,7 +509,7 @@
         statusBox.classList.add('offline');
         statusBox.innerHTML = `
           <span class="pill bad">● 查询失败</span>
-          <p>${escapeHtml(error.message)}</p>
+          <p>${escapeHtml(msg || '未知错误')}</p>
           <p class="muted">${escapeHtml(hint)}</p>
         `;
       }
