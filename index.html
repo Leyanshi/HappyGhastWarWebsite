@@ -393,9 +393,9 @@
         fallback.value = SERVER_IP;
         document.body.appendChild(fallback);
         fallback.select();
-        document.execCommand('copy');
+        const copied = document.execCommand('copy');
         fallback.remove();
-        copyTip.textContent = '已复制';
+        copyTip.textContent = copied ? '已复制（兼容模式）' : '复制失败，请手动复制';
       }
       setTimeout(() => {
         copyTip.textContent = '';
@@ -424,8 +424,10 @@
         let css = `color:${styles.color};`;
         if (styles.bold) css += 'font-weight:bold;';
         if (styles.italic) css += 'font-style:italic;';
-        if (styles.underline) css += 'text-decoration:underline;';
-        if (styles.strike) css += 'text-decoration:line-through;';
+        const decorations = [];
+        if (styles.underline) decorations.push('underline');
+        if (styles.strike) decorations.push('line-through');
+        if (decorations.length) css += `text-decoration:${decorations.join(' ')};`;
         return css;
       }
 
@@ -467,8 +469,8 @@
         if (data.online) {
           const online = data.players && typeof data.players.online === 'number' ? data.players.online : '未知';
           const max = data.players && typeof data.players.max === 'number' ? data.players.max : '未知';
-          const rawMotd = data.motd && Array.isArray(data.motd.raw) ? data.motd.raw.join(' ') : '';
-          const cleanMotd = data.motd && Array.isArray(data.motd.clean) ? data.motd.clean.join(' ') : '';
+          const rawMotd = data.motd && Array.isArray(data.motd.raw) ? data.motd.raw.join('\n') : '';
+          const cleanMotd = data.motd && Array.isArray(data.motd.clean) ? data.motd.clean.join('\n') : '';
           const motdHtml = rawMotd ? renderMinecraftMotd(rawMotd) : escapeHtml(cleanMotd || '无');
 
           statusBox.classList.add('online');
@@ -490,11 +492,16 @@
           `;
         }
       } catch (error) {
+        let hint = '可能是网络波动或 API 临时不可用，请稍后重试。';
+        const msg = String(error && error.message ? error.message : '');
+        if (msg.includes('Failed to fetch')) {
+          hint = '可能是网络不可达、DNS 解析失败或浏览器跨域限制，请检查网络后重试。';
+        }
         statusBox.classList.add('offline');
         statusBox.innerHTML = `
           <span class="pill bad">● 查询失败</span>
           <p>${escapeHtml(error.message)}</p>
-          <p class="muted">可能是网络波动或 API 临时不可用，请稍后重试。</p>
+          <p class="muted">${escapeHtml(hint)}</p>
         `;
       }
     }
