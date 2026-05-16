@@ -501,7 +501,7 @@
         }
       } catch (error) {
         let hint = '可能是网络波动或 API 临时不可用，请稍后重试。';
-        const msg = String(error && error.message ? error.message : '');
+        const msg = String(error?.message || '');
         if ((error instanceof TypeError) || msg.includes('Failed to fetch')) {
           hint = '可能是网络不可达、DNS 解析失败或浏览器跨域限制，请检查网络后重试。';
         }
