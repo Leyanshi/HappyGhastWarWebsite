@@ -193,6 +193,13 @@
       transform: translateX(130%);
     }
 
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: .65;
+      box-shadow: none;
+      transform: none;
+    }
+
     .server-ip {
       display: inline-flex;
       align-items: center;
@@ -435,7 +442,7 @@
       <p>不想再守一张床？来试试“会飞的基地战”。</p>
       <div class="buttons">
         <a href="#server" class="btn">加入服务器</a>
-        <a href="#" onclick="return false;" class="btn secondary" aria-label="Discord 占位链接">Discord（占位）</a>
+        <button type="button" class="btn secondary" aria-label="Discord 占位按钮" disabled>Discord（占位）</button>
         <a href="https://qm.qq.com/q/zWuNdoGl5A" class="btn secondary" aria-label="QQ群链接" target="_blank" rel="noopener noreferrer">加入 QQ 群</a>
       </div>
       <p class="notice">本网站与服务器为玩家社区项目，<strong>非官方 Minecraft 服务器</strong>，尊重并遵守 Mojang 相关版权政策。</p>
