@@ -383,6 +383,7 @@
     const copyTip = document.getElementById('copyTip');
     const statusBox = document.getElementById('statusBox');
     const refreshStatusBtn = document.getElementById('refreshStatusBtn');
+    const htmlEscapes = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 
     async function copyServerIp() {
       try {
@@ -404,8 +405,15 @@
 
     function escapeHtml(text) {
       return String(text).replace(/[&<>"']/g, function (m) {
-        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+        return htmlEscapes[m];
       });
+    }
+
+    function sanitizeMotdLines(input) {
+      if (!Array.isArray(input)) return '';
+      return input.filter(function (line) {
+        return typeof line === 'string';
+      }).join('\n');
     }
 
     function renderMinecraftMotd(text) {
@@ -469,9 +477,12 @@
         if (data.online) {
           const online = data.players && typeof data.players.online === 'number' ? data.players.online : '未知';
           const max = data.players && typeof data.players.max === 'number' ? data.players.max : '未知';
-          const rawMotd = data.motd && Array.isArray(data.motd.raw) ? data.motd.raw.join('\n') : '';
-          const cleanMotd = data.motd && Array.isArray(data.motd.clean) ? data.motd.clean.join('\n') : '';
+          const rawMotd = data.motd ? sanitizeMotdLines(data.motd.raw) : '';
+          const cleanMotd = data.motd ? sanitizeMotdLines(data.motd.clean) : '';
           const motdHtml = rawMotd ? renderMinecraftMotd(rawMotd) : escapeHtml(cleanMotd || '无');
+          const lastOnlineLine = data.last_online
+            ? `<p><strong>最后在线：</strong>${new Date(data.last_online).toLocaleString()}</p>`
+            : '';
 
           statusBox.classList.add('online');
           statusBox.innerHTML = `
@@ -479,7 +490,7 @@
             <p><strong>版本：</strong>${escapeHtml(data.version || '未知')}</p>
             <p><strong>玩家：</strong>${online}/${max}</p>
             <p><strong>IP：</strong>${escapeHtml(data.ip || SERVER_IP)}:${escapeHtml(data.port || '25565')}</p>
-            <p><strong>最后在线：</strong>${data.last_online ? new Date(data.last_online).toLocaleString() : '未知'}</p>
+            ${lastOnlineLine}
             <p><strong>MOTD：</strong></p>
             <div class="motd">${motdHtml}</div>
           `;
