@@ -435,13 +435,13 @@
       <p>不想再守一张床？来试试“会飞的基地战”。</p>
       <div class="buttons">
         <a href="#server" class="btn">加入服务器</a>
-        <a href="javascript:void(0)" class="btn secondary" aria-label="Discord 占位链接">Discord（占位）</a>
+        <a href="#" onclick="return false;" class="btn secondary" aria-label="Discord 占位链接">Discord（占位）</a>
         <a href="https://qm.qq.com/q/zWuNdoGl5A" class="btn secondary" aria-label="QQ群链接" target="_blank" rel="noopener noreferrer">加入 QQ 群</a>
       </div>
       <p class="notice">本网站与服务器为玩家社区项目，<strong>非官方 Minecraft 服务器</strong>，尊重并遵守 Mojang 相关版权政策。</p>
     </section>
 
-    <footer>© 星野·乐魂战 Rgiss - 玩家社区站点</footer>
+    <footer>© 2026 星野·乐魂战 Rgiss - 玩家社区站点</footer>
   </main>
 
   <script>
@@ -462,6 +462,7 @@
         fallback.value = SERVER_IP;
         document.body.appendChild(fallback);
         fallback.select();
+        // 兼容旧浏览器：Clipboard API 不可用时，降级到 execCommand 复制。
         const copied = document.execCommand('copy');
         fallback.remove();
         copyTip.textContent = copied ? '已复制（兼容模式）' : '复制失败，请手动复制';
